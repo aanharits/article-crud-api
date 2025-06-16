@@ -59,31 +59,6 @@ const createPosts = async (req, res) => {
     }
 }
 
-const deletePosts = async (req, res) => {
-    try {
-        const { id } = req.params
-
-        const post = await prisma.post.delete({
-            where: {
-                id: parseInt(id)
-            }
-        })
-
-        return res.status(200).json({
-            success: true,
-            status: "Delete data posts successfully",
-            data: post
-        })
-    } catch (error) {
-        console.log(error)
-
-        return res.status(500).json({
-            success: false,
-            status: "Failed to delete data posts"
-        })
-    }
-}
-
 module.exports = {
     getPosts,
     createPosts
