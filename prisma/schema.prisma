@@ -27,3 +27,16 @@ model Post {
 
   @@map("posts") // Maps the model to the "posts" table in the database
 }
+
+model User {
+  id       Int     @id @default(autoincrement())
+
+  email    String  @unique
+  password String
+  name     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@map("users") // Maps the model to the "users" table in the database
+}
+
