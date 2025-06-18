@@ -59,7 +59,51 @@ const createPosts = async (req, res) => {
     }
 }
 
+const updatePosts = async (req, res) => {
+    try {
+        const { id } = req.params
+        const parse = postSchema.safeParse(req.body)
+
+        if (!parse.success) {
+            const errorMessage = parse.error.issues.map(err => `${err.path} - ${err.message}`)
+
+            return res.status(400).json({
+                success: false,
+                status: errorMessage,
+                error: null
+            })
+        }
+
+        const post = await prisma.post.update({
+            where: {
+                id: parseInt(id)
+            },
+            data: {
+                title: parse.data.title,
+                author_name: parse.data.author_name,
+                content: parse.data.content,
+                published: parse.data.published
+            }
+        })
+
+        return res.status(200).json({
+            success: true,
+            status: "Update data posts successfully",
+            data: post
+        })
+
+    } catch (error) {
+        console.log(error)
+
+        return res.status(500).json({
+            success: false,
+            status: "Failed to update data posts"
+        })
+    }
+}
+
 module.exports = {
     getPosts,
-    createPosts
+    createPosts,
+    updatePosts
 }
