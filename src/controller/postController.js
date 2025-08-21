@@ -2,7 +2,7 @@ const { validatePostInput, getAllPosts, createPost, updatePost, deletePost } = r
 
 const getPosts = async (req, res) => {
     try {
-        const posts = await getAllPosts();
+        const posts = await getAllPosts(req.user.id); 
 
         if (posts.length === 0) {
             return res.status(404).json({
@@ -12,14 +12,13 @@ const getPosts = async (req, res) => {
             });
         }
 
-        return res.status(201).json({
+        return res.status(200).json({
             success: true,
             status: "Get data posts successfully",
             data: posts
         });
     } catch (error) {
         console.log(error);
-
         return res.status(500).json({
             success: false,
             status: "Failed to get data posts"
@@ -38,7 +37,7 @@ const createPosts = async (req, res) => {
             });
         }
 
-        const post = await createPost(validation.data);
+        const post = await createPost(validation.data, req.user.id); 
         return res.status(201).json({
             success: true,
             status: "Create data posts successfully",

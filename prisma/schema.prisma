@@ -9,34 +9,38 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Post {
-  id       Int      @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(255)
+  author_name String   @db.VarChar(255)
+  content     String   @db.Text
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  title     String @db.VarChar(255)
-  author_name String @db.VarChar(255)
-  content   String @db.LongText
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
 
-  published Boolean  @default(false)
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("posts") // Maps the model to the "posts" table in the database
+  @@map("posts")
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-
-  email    String  @unique
-  password String
-  name     String?
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String?
+  posts     Post[]   // Relasi ke Post
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  @@map("users") // Maps the model to the "users" table in the database
+
+  @@map("users")
 }
+
+
 

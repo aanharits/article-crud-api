@@ -1,4 +1,10 @@
-const { validateUserInput, isUserExist, createUser, verifyPassword } = require('../services/authService');
+const { validateUserInput, 
+        isUserExist, 
+        createUser, 
+        verifyPassword, 
+        generateToken, 
+        deleteUser 
+    } = require('../services/authService');
 
 const register = async (req, res) => {
     try {
@@ -29,7 +35,6 @@ const register = async (req, res) => {
         }
 
         const user = await createUser({ name, email, password });
-
         return res.status(201).json({
             success: true,
             status: 'User Created Successfully',
@@ -39,7 +44,7 @@ const register = async (req, res) => {
         console.log(error);
         return res.status(500).json({
             success: false,
-            status: 'Gagal registrasi user',
+            status: 'Registration Failed',
         });
     }
 };
@@ -64,9 +69,16 @@ const login = async (req, res) => {
             });
         }
 
+        const token = generateToken(user);
+
         return res.status(200).json({
             success: true,
             status: 'Login Successful',
+            token,
+            user: {
+                id: user.id,
+                email: user.email,
+            }
         });
     } catch (error) {
         console.log(error);
@@ -77,7 +89,27 @@ const login = async (req, res) => {
     }
 };
 
+const deleteUsers = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        await deleteUser(id);
+
+        return res.status(200).json({
+            success: true,
+            status: "Delete Users successfully"
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            status: "Failed to delete"
+        });
+    }
+};
+
 module.exports = {
     register,
-    login
+    login,
+    deleteUsers
 };

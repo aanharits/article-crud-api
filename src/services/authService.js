@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const prisma = require('../lib/prisma');
 const bcrypt = require('bcrypt');
 const { userSchema } = require('../lib/zod');
@@ -11,19 +12,24 @@ function validateUserInput(data) {
     return { success: true };
 }
 
-async function isUserExist(email) {
-    const existingUser = await prisma.user.findUnique({
-        where: { email },
-    });
-    return existingUser;
+function generateToken(user) {
+    return jwt.sign({
+            id: user.id,
+            email: user.email,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: '1d' }
+    );
 }
 
-async function hashPassword(password) {
-    return await bcrypt.hash(password, 10);
+async function isUserExist(email) {
+    return await prisma.user.findUnique({
+        where: { email },
+    });
 }
 
 async function createUser({ name, email, password }) {
-    const hashedPassword = await hashPassword(password);
+    const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
         data: {
             name,
@@ -34,6 +40,12 @@ async function createUser({ name, email, password }) {
     return user;
 }
 
+async function deleteUser(id) {
+    return await prisma.user.delete({
+        where: { id: parseInt(id) }
+    });
+}
+
 async function verifyPassword(inputPassword, hashedPassword) {
     return await bcrypt.compare(inputPassword, hashedPassword);
 }
@@ -42,5 +54,7 @@ module.exports = {
     validateUserInput,
     isUserExist,
     createUser,
-    verifyPassword
+    verifyPassword,
+    generateToken,
+    deleteUser
 };
