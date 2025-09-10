@@ -60,7 +60,7 @@ const login = async (req, res) => {
                 status: 'User Not Found',
             });
         }
-
+        
         const isValid = await verifyPassword(password, user.password);
         if (!isValid) {
             return res.status(401).json({
