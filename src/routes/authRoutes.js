@@ -6,4 +6,4 @@ authRoutes.post('/register', register);
 authRoutes.post('/login', login);
 authRoutes.delete('/users/:id', deleteUsers)
 
-module.exports = authRoutes;
+module.exports = authRoutes

@@ -85,9 +85,7 @@ const updatePosts = async (req, res) => {
 const deletePosts = async (req, res) => {
     try {
         const { id } = req.params;
-
         await deletePost(id);
-
         return res.status(200).json({
             success: true,
             status: "Delete data posts successfully"
