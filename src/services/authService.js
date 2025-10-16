@@ -3,6 +3,7 @@ const prisma = require('../lib/prisma');
 const bcrypt = require('bcrypt');
 const { userSchema } = require('../lib/zod');
 
+// validasi inputan user menggunakan Zod
 function validateUserInput(data) {
     const parse = userSchema.safeParse(data);
     if (!parse.success) {
@@ -12,6 +13,7 @@ function validateUserInput(data) {
     return { success: true };
 }
 
+// generate token untuk user
 function generateToken(user) {
     return jwt.sign({
             id: user.id,
@@ -22,12 +24,14 @@ function generateToken(user) {
     );
 }
 
+// mengecek apakah user sudah ada
 async function isUserExist(email) {
     return await prisma.user.findUnique({
         where: { email },
     });
 }
 
+// create user & hash password yang telah dicreate
 async function createUser({ name, email, password }) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
@@ -46,6 +50,7 @@ async function deleteUser(id) {
     });
 }
 
+// melakukan komparasi terhadap input dengan hash password
 async function verifyPassword(inputPassword, hashedPassword) {
     return await bcrypt.compare(inputPassword, hashedPassword);
 }
