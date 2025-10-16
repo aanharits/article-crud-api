@@ -17,6 +17,7 @@ function validatePostInput(data) {
     };
 }
 
+// get all post data from database
 async function getAllPosts(userId) {
     return await prisma.post.findMany({
         where: {
@@ -25,6 +26,7 @@ async function getAllPosts(userId) {
     });
 }
 
+// create new post data to database
 async function createPost(data, userId) {
     return await prisma.post.create({
         data: {
@@ -37,6 +39,7 @@ async function createPost(data, userId) {
     });
 }
 
+// update post data to database 
 async function updatePost(id, data) {
     return await prisma.post.update({
         where: { id: parseInt(id) },
@@ -49,6 +52,7 @@ async function updatePost(id, data) {
     });
 }
 
+// delete post data from database
 async function deletePost(id) {
     return await prisma.post.delete({
         where: { id: parseInt(id) }
